@@ -20,7 +20,7 @@ const HomePage = async () => {
     return <div>No featured projects found.</div>;
   }
   return (
-    <div className="space-y-12 my-12">
+    <main className="space-y-12 my-12">
       <SplitText
         type="chars"
         text={author.shortIntro}
@@ -45,7 +45,7 @@ const HomePage = async () => {
       />
       <HorizontalScroll projects={featuredProjects} />
       <FluidBuild build={author.build} />
-    </div>
+    </main>
   );
 };
 

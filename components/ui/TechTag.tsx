@@ -3,21 +3,26 @@
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 
-import { useRef } from "react";
+import { Component, useRef } from "react";
 
 type ProjectMagneticLinkProps = {
   title: string;
   className?: string;
+  button?: boolean;
+  onClick?: () => void;
+  active?: boolean;
 };
-const TechTag = ({ title, className }: ProjectMagneticLinkProps) => {
+const TechTag = ({ title, className, button, onClick, active }: ProjectMagneticLinkProps) => {
   const tagRef = useRef<HTMLLIElement | null>(null);
+  const tagButtonRef = useRef<HTMLButtonElement | null>(null);
   useGSAP((context, contextSafe) => {
-    const tag = tagRef.current;
+    const tag = button ? tagButtonRef.current : tagRef.current;
     if (!tag) return;
-    const onMouseMove = contextSafe!((e: MouseEvent) => {
+    const onMouseMove = contextSafe!((e: Event) => {
+      const ev = e as MouseEvent;
       const rect = tag.getBoundingClientRect();
-      const x = e.clientX - rect.left - rect.width / 2;
-      const y = e.clientY - rect.top - rect.height / 2;
+      const x = ev.clientX - rect.left - rect.width / 2;
+      const y = ev.clientY - rect.top - rect.height / 2;
       gsap.to(tag, {
         x: x * 0.3,
         y: y * 0.3,
@@ -43,6 +48,20 @@ const TechTag = ({ title, className }: ProjectMagneticLinkProps) => {
       tag.removeEventListener("mouseleave", onMouseLeave);
     };
   });
+  if (button) {
+    return (
+      <button
+        onClick={onClick}
+        ref={tagButtonRef}
+        className={`cursor-pointer text-[min(4vw,14px)] border px-2.5 p-1 rounded-xl hover:bg-muted hover:text-bg transition-all duration-300 ${
+          active ? "bg-muted text-bg" : "bg-transparent"
+        } ${className}`}
+      >
+        <span className="font-medium">{title}</span>
+      </button>
+    );
+  }
+
   return (
     <li
       ref={tagRef}

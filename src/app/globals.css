@@ -76,4 +76,23 @@ body {
         calc(var(--start) + var(--step) * var(--i)) /* angle works now */
     );
   }
+  .flip-list {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .listItem {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    overflow: clip;
+  }
+  .item-content {
+    max-height: 0;
+    opacity: 0;
+  }
+  .listItem.expanded .item-content {
+    max-height: 1000px;
+    opacity: 1;
+    transition: max-height 0.3s ease;
+  }
 }

@@ -59,3 +59,31 @@ export const featuredProjectsQuery = defineQuery(`
    'mobileAlt':images.mobile.alt,
    'tabletAlt':images.tablet.alt
 }`);
+export const getAllTechTagsQuery = defineQuery(`
+  *[
+    _type == "techTag" &&
+    count(*[_type == "project" && references(^._id)]) >= 1
+  ] | order(title asc) {
+    title,
+    icon{asset->}
+  }
+`);
+
+export const allProjectsQuery = defineQuery(`
+  *[_type == 'project' && count(techStack[_ref in *[_type == "techTag" && title in $tags]._id]) == count($tags)] | order(index asc) {
+  title,
+  index,
+  description,
+  accent,
+    textDark,
+    textLight,
+  githubLink,
+  liveLink,
+   techStack[]->{title},
+  "desktopImg": images.desktop.asset->,
+  "mobileImg": images.mobile.asset->,
+  "tabletImg": images.tablet.asset->,
+   'desktopAlt':images.desktop.alt,
+   'mobileAlt':images.mobile.alt,
+   'tabletAlt':images.tablet.alt
+}`);
