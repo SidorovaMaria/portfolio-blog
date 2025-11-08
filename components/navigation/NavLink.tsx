@@ -8,7 +8,15 @@ import { usePathname } from "next/navigation";
 
 gsap.registerPlugin(SplitText);
 
-const NavLink = ({ href, label }: { href: string; label: string }) => {
+const NavLink = ({
+  href,
+  label,
+  className,
+}: {
+  href: string;
+  label: string;
+  className?: string;
+}) => {
   const pathname = usePathname();
   const isActive = pathname === href;
   const root = useRef<HTMLLIElement | null>(null);
@@ -73,7 +81,7 @@ const NavLink = ({ href, label }: { href: string; label: string }) => {
         ref={line1}
         className={`link-text-1 text-sm tracking-wider font-clash lowercase text-fg ${
           isActive ? "pointer-events-none" : "peer"
-        } `}
+        } ${className}`}
         onMouseEnter={() => onEnterRef.current()}
         onMouseLeave={() => onLeaveRef.current()}
         onFocus={() => onEnterRef.current()}
@@ -91,7 +99,7 @@ const NavLink = ({ href, label }: { href: string; label: string }) => {
       {/* the “revealed” copy stacked on top */}
       <p
         ref={line2}
-        className="link-text-2 text-sm tracking-wider font-clash lowercase text-fg  pointer-events-none absolute"
+        className={`link-text-2 text-sm tracking-wider font-clash lowercase text-fg  pointer-events-none absolute ${className}`}
         aria-hidden
       >
         {label}

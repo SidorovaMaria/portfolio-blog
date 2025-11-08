@@ -11,12 +11,11 @@ export const allBlogPostsQuery = defineQuery(
     publishedAt,
     featured,
     readingTime,
-    coverImage,
+    coverImage{asset->,alt},
     author->{
       name,
-      "slug": slug.current,
-      image
-    }
+    },
+      body
   }`
 );
 

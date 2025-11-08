@@ -49,7 +49,7 @@ export const blogPostType = defineType({
       type: "text",
       group: "content",
       rows: 2,
-      validation: (Rule) => Rule.required().min(40).max(140),
+      validation: (Rule) => Rule.required().min(40).max(210),
     }),
     defineField({
       name: "coverImage",
@@ -72,6 +72,7 @@ export const blogPostType = defineType({
             }),
         }),
       ],
+      validation: (Rule) => Rule.required().error("Cover image is required."),
     }),
     defineField({
       name: "body",

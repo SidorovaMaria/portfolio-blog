@@ -345,7 +345,7 @@ export type AllSanitySchemaTypes = BlockContent | BlogPost | Author | TechTag | 
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./src/sanity/lib/queries.ts
 // Variable: allBlogPostsQuery
-// Query: *[_type == "blogPost"] | order(publishedAt desc) {    _id,    title,    "slug": slug.current,    type,    excerpt,    publishedAt,    featured,    readingTime,    coverImage,    author->{      name,      "slug": slug.current,      image    }  }
+// Query: *[_type == "blogPost"] | order(publishedAt desc) {    _id,    title,    "slug": slug.current,    type,    excerpt,    publishedAt,    featured,    readingTime,    coverImage{asset->,alt},    author->{      name,    },      body  }
 export type AllBlogPostsQueryResult = Array<{
   _id: string;
   title: string;
@@ -356,23 +356,34 @@ export type AllBlogPostsQueryResult = Array<{
   featured: boolean | null;
   readingTime: number | null;
   coverImage: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: "image";
+    asset: {
+      _id: string;
+      _type: "sanity.imageAsset";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      originalFilename?: string;
+      label?: string;
+      title?: string;
+      description?: string;
+      altText?: string;
+      sha1hash?: string;
+      extension?: string;
+      mimeType?: string;
+      size?: number;
+      assetId?: string;
+      uploadId?: string;
+      path?: string;
+      url?: string;
+      metadata?: SanityImageMetadata;
+      source?: SanityAssetSourceData;
+    } | null;
+    alt: string | null;
   } | null;
   author: {
     name: string | null;
-    slug: string | null;
-    image: null;
   };
+  body: BlockContent | null;
 }>;
 // Variable: avatarQuery
 // Query: *[_type == "author"] | order(_createdAt desc)[0] {  name,  alt,  shortIntro,  intro,  build,  techStack[]->{    title,    icon{asset->}  },  avatar }
@@ -556,7 +567,7 @@ export type AllProjectsQueryResult = Array<never>;
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    "*[_type == \"blogPost\"] | order(publishedAt desc) {\n    _id,\n    title,\n    \"slug\": slug.current,\n    type,\n    excerpt,\n    publishedAt,\n    featured,\n    readingTime,\n    coverImage,\n    author->{\n      name,\n      \"slug\": slug.current,\n      image\n    }\n  }": AllBlogPostsQueryResult;
+    "*[_type == \"blogPost\"] | order(publishedAt desc) {\n    _id,\n    title,\n    \"slug\": slug.current,\n    type,\n    excerpt,\n    publishedAt,\n    featured,\n    readingTime,\n    coverImage{asset->,alt},\n    author->{\n      name,\n    },\n      body\n  }": AllBlogPostsQueryResult;
     "*[_type == \"author\"] | order(_createdAt desc)[0] {\n  name,\n  alt,\n  shortIntro,\n  intro,\n  build,\n  techStack[]->{\n    title,\n    icon{asset->}\n  },\n  avatar \n}": AvatarQueryResult;
     "*[_type == \"author\"] | order(_createdAt desc)[0] {\n  socialLinks\n}": GetAuthorSocialLinksQueryResult;
     "\n  *[_type == 'project' && featured == true] | order(index asc) {\n  title,\n  index,\n  description,\n  accent,\n    textDark,\n    textLight,\n  githubLink,\n  liveLink,\n   techStack[]->{title},\n  \"desktopImg\": images.desktop.asset->,\n  \"mobileImg\": images.mobile.asset->,\n  \"tabletImg\": images.tablet.asset->,\n   'desktopAlt':images.desktop.alt,\n   'mobileAlt':images.mobile.alt,\n   'tabletAlt':images.tablet.alt\n}": FeaturedProjectsQueryResult;
