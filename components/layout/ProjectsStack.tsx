@@ -6,7 +6,6 @@ import ProjectStacked from "../ui/ProjectStacked";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { AllProjectsQueryResultCustom } from "@/sanity/custom.types";
 gsap.registerPlugin(ScrollTrigger);
 
 const ProjectsStack = ({ projects }: { projects: FeaturedProjectsQueryResult }) => {
