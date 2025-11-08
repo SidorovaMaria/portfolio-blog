@@ -1,11 +1,6 @@
-import React from "react";
 import SplitText from "../../../../components/ui/SplitText";
-import CornerLink from "../../../../components/ui/CornerLink";
 import { sanityFetch } from "@/sanity/lib/live";
 import { getAuthorSocialLinksQuery } from "@/sanity/lib/queries";
-import { toSocialIcons } from "../../../../lib/socials";
-import Link from "next/link";
-import { Mail, Phone } from "lucide-react";
 import ContactLinks from "../../../../components/layout/ContactLinks";
 import ContactForm from "../../../../components/forms/ContactForm";
 import WhyMe from "../../../../components/layout/WhyMe";

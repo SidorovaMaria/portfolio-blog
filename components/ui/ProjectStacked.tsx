@@ -1,5 +1,5 @@
 "use client";
-import { AllProjectsQueryResult } from "@/sanity/types";
+import { AllProjectsQueryResult, FeaturedProjectsQueryResult } from "@/sanity/types";
 import { EyeOpenIcon, GithubIcon } from "@sanity/icons";
 import Link from "next/link";
 import React from "react";
@@ -11,7 +11,7 @@ const ProjectStacked = ({
   project,
   compact,
 }: {
-  project: AllProjectsQueryResult[number];
+  project: FeaturedProjectsQueryResult[number];
   compact: boolean;
 }) => {
   return (

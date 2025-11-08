@@ -1,14 +1,15 @@
 "use client";
-import { AllProjectsQueryResult } from "@/sanity/types";
+import { AllProjectsQueryResult, FeaturedProjectsQueryResult } from "@/sanity/types";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import ProjectStacked from "../ui/ProjectStacked";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { AllProjectsQueryResultCustom } from "@/sanity/custom.types";
 gsap.registerPlugin(ScrollTrigger);
 
-const ProjectsStack = ({ projects }: { projects: AllProjectsQueryResult }) => {
+const ProjectsStack = ({ projects }: { projects: FeaturedProjectsQueryResult }) => {
   const searchParams = useSearchParams();
   const [compact, setCompact] = useState<boolean>(searchParams.get("view") === "compact");
   useEffect(() => {
@@ -58,7 +59,7 @@ const ProjectsStack = ({ projects }: { projects: AllProjectsQueryResult }) => {
       className={`stack-container flex flex-col ${compact && "grid grid-cols-1 md:grid-cols-2"}`}
       ref={root}
     >
-      {projects.map((project, index) => (
+      {projects.map((project) => (
         <ProjectStacked key={project.index} project={project} compact={compact} />
       ))}
     </section>

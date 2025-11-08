@@ -27,7 +27,6 @@ const ProjectsPage = async ({
   const { data: techStack } = await sanityFetch({
     query: getAllTechTagsQuery,
   });
-  console.log(projects);
 
   return (
     <main className="space-y-12 my-12 mx-[4vw]">
