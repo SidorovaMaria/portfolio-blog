@@ -95,4 +95,15 @@ body {
     opacity: 1;
     transition: max-height 0.3s ease;
   }
+  .error-message {
+    @apply text-sm  dark:text-red-400 text-red-800 font-medium w-full tracking-wide pt-1;
+  }
+  label::after {
+    content: "*";
+    @apply dark:text-red-400 text-red-800 ml-1;
+  }
+  .error-message::before {
+    content: "⚠";
+    @apply mr-1;
+  }
 }

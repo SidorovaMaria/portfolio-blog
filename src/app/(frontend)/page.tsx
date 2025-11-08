@@ -32,7 +32,7 @@ const HomePage = async () => {
         delay={0.6}
         stagger={0.055}
         text={author.intro}
-        className="text-center text-[min(5vw,32px])] max-w-[min(60vw,768px)] mx-auto  text-muted-foreground tracking-wide cursor-default
+        className="text-center text-[min(4vw,16px)] max-w-[min(60vw,768px)] mx-auto  text-muted-foreground tracking-wide cursor-default
    "
       />
       <Marquee techStack={author.techStack} />

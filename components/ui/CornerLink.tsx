@@ -103,7 +103,7 @@ const CornerLink = ({ connectLinks, className }: ConnectSectionProps) => {
           <Link
             key={i}
             href={item.href}
-            className={`group relative text-[min(3vw,14px)] menu-item text-center  flex items-center gap-2 justify-center`}
+            className={`group relative text-[min(3vw,14px)] menu-item text-center flex items-center gap-2 justify-center corner-link`}
           >
             {item.icon && item.icon}
             {item.label && item.label}

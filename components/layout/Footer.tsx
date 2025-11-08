@@ -8,23 +8,11 @@ import { InstagramIcon } from "lucide-react";
 import Image from "next/image";
 import { NAVLINKS } from "../../constants";
 import Link from "next/link";
+import { get } from "http";
+import { toSocialIcons } from "../../lib/socials";
 
 const Footer = ({ socialLinks }: { socialLinks: GetAuthorSocialLinksQueryResult }) => {
-  console.log("Footer socialLinks:", socialLinks);
-  const socialIcons = [
-    {
-      icon: <GithubIcon className="size-6" />,
-      href: socialLinks?.socialLinks?.github ?? "/not-found",
-    },
-    {
-      icon: <LinkedinIcon className="size-6" />,
-      href: socialLinks?.socialLinks?.linkedin ?? "/not-found",
-    },
-    {
-      icon: <EnvelopeIcon className="size-6" />,
-      href: socialLinks?.socialLinks?.email ?? "/not-found",
-    },
-  ];
+  const socialIcons = toSocialIcons(socialLinks);
   return (
     <footer className="w-full bg-primary/20  rounded-t-3xl px-10 md:px-16 py-6 flex flex-col justify-between">
       <div className="flex items-center justify-between w-full px-2">

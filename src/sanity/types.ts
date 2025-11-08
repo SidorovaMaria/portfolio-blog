@@ -520,7 +520,7 @@ export type FeaturedProjectsQueryResult = Array<{
   tabletAlt: string | null;
 }>;
 // Variable: getAllTechTagsQuery
-// Query: *[_type == 'techTag'] {    title,    icon{asset->}  }
+// Query: *[    _type == "techTag" &&    count(*[_type == "project" && references(^._id)]) >= 1  ] | order(title asc) {    title,    icon{asset->}  }
 export type GetAllTechTagsQueryResult = Array<{
   title: string;
   icon: {
@@ -549,89 +549,8 @@ export type GetAllTechTagsQueryResult = Array<{
   } | null;
 }>;
 // Variable: allProjectsQuery
-// Query: *[_type == 'project'] | order(index asc) {  title,  index,  description,  accent,    textDark,    textLight,  githubLink,  liveLink,   techStack[]->{title},  "desktopImg": images.desktop.asset->,  "mobileImg": images.mobile.asset->,  "tabletImg": images.tablet.asset->,   'desktopAlt':images.desktop.alt,   'mobileAlt':images.mobile.alt,   'tabletAlt':images.tablet.alt}
-export type AllProjectsQueryResult = Array<{
-  title: string;
-  index: string;
-  description: string;
-  accent: string | null;
-  textDark: string | null;
-  textLight: string | null;
-  githubLink: string | null;
-  liveLink: string | null;
-  techStack: Array<{
-    title: string;
-  }>;
-  desktopImg: {
-    _id: string;
-    _type: "sanity.imageAsset";
-    _createdAt: string;
-    _updatedAt: string;
-    _rev: string;
-    originalFilename?: string;
-    label?: string;
-    title?: string;
-    description?: string;
-    altText?: string;
-    sha1hash?: string;
-    extension?: string;
-    mimeType?: string;
-    size?: number;
-    assetId?: string;
-    uploadId?: string;
-    path?: string;
-    url?: string;
-    metadata?: SanityImageMetadata;
-    source?: SanityAssetSourceData;
-  } | null;
-  mobileImg: {
-    _id: string;
-    _type: "sanity.imageAsset";
-    _createdAt: string;
-    _updatedAt: string;
-    _rev: string;
-    originalFilename?: string;
-    label?: string;
-    title?: string;
-    description?: string;
-    altText?: string;
-    sha1hash?: string;
-    extension?: string;
-    mimeType?: string;
-    size?: number;
-    assetId?: string;
-    uploadId?: string;
-    path?: string;
-    url?: string;
-    metadata?: SanityImageMetadata;
-    source?: SanityAssetSourceData;
-  } | null;
-  tabletImg: {
-    _id: string;
-    _type: "sanity.imageAsset";
-    _createdAt: string;
-    _updatedAt: string;
-    _rev: string;
-    originalFilename?: string;
-    label?: string;
-    title?: string;
-    description?: string;
-    altText?: string;
-    sha1hash?: string;
-    extension?: string;
-    mimeType?: string;
-    size?: number;
-    assetId?: string;
-    uploadId?: string;
-    path?: string;
-    url?: string;
-    metadata?: SanityImageMetadata;
-    source?: SanityAssetSourceData;
-  } | null;
-  desktopAlt: string | null;
-  mobileAlt: string | null;
-  tabletAlt: string | null;
-}>;
+// Query: *[_type == 'project' && count(techStack[_ref in *[_type == "techTag" && title in $tags]._id]) == count($tags)] | order(index asc) {  title,  index,  description,  accent,    textDark,    textLight,  githubLink,  liveLink,   techStack[]->{title},  "desktopImg": images.desktop.asset->,  "mobileImg": images.mobile.asset->,  "tabletImg": images.tablet.asset->,   'desktopAlt':images.desktop.alt,   'mobileAlt':images.mobile.alt,   'tabletAlt':images.tablet.alt}
+export type AllProjectsQueryResult = Array<never>;
 
 // Query TypeMap
 import "@sanity/client";
@@ -641,7 +560,7 @@ declare module "@sanity/client" {
     "*[_type == \"author\"] | order(_createdAt desc)[0] {\n  name,\n  alt,\n  shortIntro,\n  intro,\n  build,\n  techStack[]->{\n    title,\n    icon{asset->}\n  },\n  avatar \n}": AvatarQueryResult;
     "*[_type == \"author\"] | order(_createdAt desc)[0] {\n  socialLinks\n}": GetAuthorSocialLinksQueryResult;
     "\n  *[_type == 'project' && featured == true] | order(index asc) {\n  title,\n  index,\n  description,\n  accent,\n    textDark,\n    textLight,\n  githubLink,\n  liveLink,\n   techStack[]->{title},\n  \"desktopImg\": images.desktop.asset->,\n  \"mobileImg\": images.mobile.asset->,\n  \"tabletImg\": images.tablet.asset->,\n   'desktopAlt':images.desktop.alt,\n   'mobileAlt':images.mobile.alt,\n   'tabletAlt':images.tablet.alt\n}": FeaturedProjectsQueryResult;
-    "\n  *[_type == 'techTag'] {\n    title,\n    icon{asset->}\n  }\n": GetAllTechTagsQueryResult;
-    "\n  *[_type == 'project'] | order(index asc) {\n  title,\n  index,\n  description,\n  accent,\n    textDark,\n    textLight,\n  githubLink,\n  liveLink,\n   techStack[]->{title},\n  \"desktopImg\": images.desktop.asset->,\n  \"mobileImg\": images.mobile.asset->,\n  \"tabletImg\": images.tablet.asset->,\n   'desktopAlt':images.desktop.alt,\n   'mobileAlt':images.mobile.alt,\n   'tabletAlt':images.tablet.alt\n}": AllProjectsQueryResult;
+    "\n  *[\n    _type == \"techTag\" &&\n    count(*[_type == \"project\" && references(^._id)]) >= 1\n  ] | order(title asc) {\n    title,\n    icon{asset->}\n  }\n": GetAllTechTagsQueryResult;
+    "\n  *[_type == 'project' && count(techStack[_ref in *[_type == \"techTag\" && title in $tags]._id]) == count($tags)] | order(index asc) {\n  title,\n  index,\n  description,\n  accent,\n    textDark,\n    textLight,\n  githubLink,\n  liveLink,\n   techStack[]->{title},\n  \"desktopImg\": images.desktop.asset->,\n  \"mobileImg\": images.mobile.asset->,\n  \"tabletImg\": images.tablet.asset->,\n   'desktopAlt':images.desktop.alt,\n   'mobileAlt':images.mobile.alt,\n   'tabletAlt':images.tablet.alt\n}": AllProjectsQueryResult;
   }
 }
