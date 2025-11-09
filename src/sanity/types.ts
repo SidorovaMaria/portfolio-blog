@@ -55,7 +55,7 @@ export type BlogPost = {
   slug: Slug;
   type?: "Dev Log" | "Tutorial" | "Opinion" | "Update";
   excerpt: string;
-  coverImage?: {
+  coverImage: {
     asset?: {
       _ref: string;
       _type: "reference";
@@ -379,12 +379,53 @@ export type AllBlogPostsQueryResult = Array<{
       source?: SanityAssetSourceData;
     } | null;
     alt: string | null;
-  } | null;
+  };
   author: {
     name: string | null;
   };
   body: BlockContent | null;
 }>;
+// Variable: getPostBySlugQuery
+// Query: *[_type == "blogPost" && slug.current == $slug][0] {    _id,    title,    "slug": slug.current,    type,    excerpt,    publishedAt,    featured,    readingTime,    coverImage{asset->,alt},    author->{      name,    },      body  }
+export type GetPostBySlugQueryResult = {
+  _id: string;
+  title: string;
+  slug: string;
+  type: "Dev Log" | "Opinion" | "Tutorial" | "Update" | null;
+  excerpt: string;
+  publishedAt: string;
+  featured: boolean | null;
+  readingTime: number | null;
+  coverImage: {
+    asset: {
+      _id: string;
+      _type: "sanity.imageAsset";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      originalFilename?: string;
+      label?: string;
+      title?: string;
+      description?: string;
+      altText?: string;
+      sha1hash?: string;
+      extension?: string;
+      mimeType?: string;
+      size?: number;
+      assetId?: string;
+      uploadId?: string;
+      path?: string;
+      url?: string;
+      metadata?: SanityImageMetadata;
+      source?: SanityAssetSourceData;
+    } | null;
+    alt: string | null;
+  };
+  author: {
+    name: string | null;
+  };
+  body: BlockContent | null;
+} | null;
 // Variable: avatarQuery
 // Query: *[_type == "author"] | order(_createdAt desc)[0] {  name,  alt,  shortIntro,  intro,  build,  techStack[]->{    title,    icon{asset->}  },  avatar }
 export type AvatarQueryResult = {
@@ -568,6 +609,7 @@ import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
     "*[_type == \"blogPost\"] | order(publishedAt desc) {\n    _id,\n    title,\n    \"slug\": slug.current,\n    type,\n    excerpt,\n    publishedAt,\n    featured,\n    readingTime,\n    coverImage{asset->,alt},\n    author->{\n      name,\n    },\n      body\n  }": AllBlogPostsQueryResult;
+    "*[_type == \"blogPost\" && slug.current == $slug][0] {\n    _id,\n    title,\n    \"slug\": slug.current,\n    type,\n    excerpt,\n    publishedAt,\n    featured,\n    readingTime,\n    coverImage{asset->,alt},\n    author->{\n      name,\n    },\n      body\n  }": GetPostBySlugQueryResult;
     "*[_type == \"author\"] | order(_createdAt desc)[0] {\n  name,\n  alt,\n  shortIntro,\n  intro,\n  build,\n  techStack[]->{\n    title,\n    icon{asset->}\n  },\n  avatar \n}": AvatarQueryResult;
     "*[_type == \"author\"] | order(_createdAt desc)[0] {\n  socialLinks\n}": GetAuthorSocialLinksQueryResult;
     "\n  *[_type == 'project' && featured == true] | order(index asc) {\n  title,\n  index,\n  description,\n  accent,\n    textDark,\n    textLight,\n  githubLink,\n  liveLink,\n   techStack[]->{title},\n  \"desktopImg\": images.desktop.asset->,\n  \"mobileImg\": images.mobile.asset->,\n  \"tabletImg\": images.tablet.asset->,\n   'desktopAlt':images.desktop.alt,\n   'mobileAlt':images.mobile.alt,\n   'tabletAlt':images.tablet.alt\n}": FeaturedProjectsQueryResult;

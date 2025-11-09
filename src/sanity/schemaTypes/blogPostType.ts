@@ -100,6 +100,16 @@ export const blogPostType = defineType({
       initialValue: false,
     }),
     defineField({
+      name: "tags",
+      title: "Tags",
+      type: "array",
+      of: [{ type: "string" }],
+      group: "publish",
+      options: {
+        layout: "tags",
+      },
+    }),
+    defineField({
       name: "readingTime",
       title: "Reading Time (min)",
       type: "number",

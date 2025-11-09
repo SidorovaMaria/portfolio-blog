@@ -418,7 +418,7 @@
             }
           }
         },
-        "optional": true
+        "optional": false
       },
       "body": {
         "type": "objectAttribute",

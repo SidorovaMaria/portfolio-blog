@@ -6,20 +6,6 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 
 const Latest = ({ posts }: { posts: AllBlogPostsQueryResult }) => {
-  useGSAP(() => {
-    const cards = gsap.utils.toArray<HTMLElement>(".blog-card");
-    gsap.fromTo(
-      cards,
-      { y: 50, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        ease: "sine.out",
-        stagger: 0.25,
-      }
-    );
-  });
   return (
     <aside className="flex flex-col w-full ">
       <SplitText

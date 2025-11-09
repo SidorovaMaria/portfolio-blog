@@ -18,6 +18,23 @@ export const allBlogPostsQuery = defineQuery(
       body
   }`
 );
+export const getPostBySlugQuery = defineQuery(
+  `*[_type == "blogPost" && slug.current == $slug][0] {
+    _id,
+    title,
+    "slug": slug.current,
+    type,
+    excerpt,
+    publishedAt,
+    featured,
+    readingTime,
+    coverImage{asset->,alt},
+    author->{
+      name,
+    },
+      body
+  }`
+);
 
 //Technically I am the only one author, but this is to keep it scalable
 export const avatarQuery = defineQuery(
