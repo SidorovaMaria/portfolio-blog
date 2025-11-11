@@ -13,40 +13,37 @@
  */
 
 // Source: schema.json
-export type BlockContent = Array<
-  | {
-      children?: Array<{
-        marks?: Array<string>;
-        text?: string;
-        _type: "span";
-        _key: string;
-      }>;
-      style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
-      listItem?: "bullet";
-      markDefs?: Array<{
-        href?: string;
-        _type: "link";
-        _key: string;
-      }>;
-      level?: number;
-      _type: "block";
-      _key: string;
-    }
-  | {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
-      media?: unknown;
-      hotspot?: SanityImageHotspot;
-      crop?: SanityImageCrop;
-      alt?: string;
-      _type: "image";
-      _key: string;
-    }
->;
+export type BlockContent = Array<{
+  children?: Array<{
+    marks?: Array<string>;
+    text?: string;
+    _type: "span";
+    _key: string;
+  }>;
+  style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
+  listItem?: "bullet";
+  markDefs?: Array<{
+    href?: string;
+    _type: "link";
+    _key: string;
+  }>;
+  level?: number;
+  _type: "block";
+  _key: string;
+} | {
+  asset?: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+  };
+  media?: unknown;
+  hotspot?: SanityImageHotspot;
+  crop?: SanityImageCrop;
+  alt?: string;
+  _type: "image";
+  _key: string;
+}>;
 
 export type BlogPost = {
   _id: string;
@@ -140,19 +137,7 @@ export type TechTag = {
   _rev: string;
   title: string;
   slug: Slug;
-  category?:
-    | "Language"
-    | "Framework"
-    | "Library"
-    | "Styling"
-    | "UI"
-    | "State"
-    | "Database"
-    | "Auth"
-    | "Tooling"
-    | "Infra"
-    | "Testing"
-    | "Other";
+  category?: "Language" | "Framework" | "Library" | "Styling" | "UI" | "State" | "Database" | "Auth" | "Tooling" | "Infra" | "Testing" | "Other";
   icon?: {
     asset?: {
       _ref: string;
@@ -357,23 +342,7 @@ export type SanityAssetSourceData = {
   url?: string;
 };
 
-export type AllSanitySchemaTypes =
-  | BlockContent
-  | BlogPost
-  | Author
-  | TechTag
-  | Project
-  | SanityImagePaletteSwatch
-  | SanityImagePalette
-  | SanityImageDimensions
-  | SanityImageHotspot
-  | SanityImageCrop
-  | SanityFileAsset
-  | SanityImageAsset
-  | SanityImageMetadata
-  | Geopoint
-  | Slug
-  | SanityAssetSourceData;
+export type AllSanitySchemaTypes = BlockContent | BlogPost | Author | TechTag | Project | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./src/sanity/lib/queries.ts
 // Variable: allBlogPostsQuery
@@ -640,12 +609,12 @@ export type AllProjectsQueryResult = Array<never>;
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    '*[_type == "blogPost"] | order(publishedAt desc) {\n    _id,\n    title,\n    "slug": slug.current,\n    type,\n    excerpt,\n    publishedAt,\n    featured,\n    readingTime,\n    coverImage{asset->,alt},\n    author->{\n      name,\n    },\n      body\n  }': AllBlogPostsQueryResult;
-    '*[_type == "blogPost" && slug.current == $slug][0] {\n    _id,\n    title,\n    "slug": slug.current,\n    type,\n    excerpt,\n    publishedAt,\n    featured,\n    readingTime,\n    coverImage{asset->,alt},\n    author->{\n      name,\n    },\n      body\n  }': GetPostBySlugQueryResult;
-    '*[_type == "author"] | order(_createdAt desc)[0] {\n  name,\n  alt,\n  shortIntro,\n  intro,\n  build,\n  techStack[]->{\n    title,\n    icon{asset->}\n  },\n  avatar \n}': AvatarQueryResult;
-    '*[_type == "author"] | order(_createdAt desc)[0] {\n  socialLinks\n}': GetAuthorSocialLinksQueryResult;
+    "*[_type == \"blogPost\"] | order(publishedAt desc) {\n    _id,\n    title,\n    \"slug\": slug.current,\n    type,\n    excerpt,\n    publishedAt,\n    featured,\n    readingTime,\n    coverImage{asset->,alt},\n    author->{\n      name,\n    },\n      body\n  }": AllBlogPostsQueryResult;
+    "*[_type == \"blogPost\" && slug.current == $slug][0] {\n    _id,\n    title,\n    \"slug\": slug.current,\n    type,\n    excerpt,\n    publishedAt,\n    featured,\n    readingTime,\n    coverImage{asset->,alt},\n    author->{\n      name,\n    },\n      body\n  }": GetPostBySlugQueryResult;
+    "*[_type == \"author\"] | order(_createdAt desc)[0] {\n  name,\n  alt,\n  shortIntro,\n  intro,\n  build,\n  techStack[]->{\n    title,\n    icon{asset->}\n  },\n  avatar \n}": AvatarQueryResult;
+    "*[_type == \"author\"] | order(_createdAt desc)[0] {\n  socialLinks\n}": GetAuthorSocialLinksQueryResult;
     "\n  *[_type == 'project' && featured == true] | order(index asc) {\n  title,\n  index,\n  description,\n  accent,\n    textDark,\n    textLight,\n  githubLink,\n  liveLink,\n   techStack[]->{title},\n  \"desktopImg\": images.desktop.asset->,\n  \"mobileImg\": images.mobile.asset->,\n  \"tabletImg\": images.tablet.asset->,\n   'desktopAlt':images.desktop.alt,\n   'mobileAlt':images.mobile.alt,\n   'tabletAlt':images.tablet.alt\n}": FeaturedProjectsQueryResult;
-    '\n  *[\n    _type == "techTag" &&\n    count(*[_type == "project" && references(^._id)]) >= 1\n  ] | order(title asc) {\n    title,\n    icon{asset->}\n  }\n': GetAllTechTagsQueryResult;
+    "\n  *[\n    _type == \"techTag\" &&\n    count(*[_type == \"project\" && references(^._id)]) >= 1\n  ] | order(title asc) {\n    title,\n    icon{asset->}\n  }\n": GetAllTechTagsQueryResult;
     "\n  *[_type == 'project' && count(techStack[_ref in *[_type == \"techTag\" && title in $tags]._id]) == count($tags)] | order(index asc) {\n  title,\n  index,\n  description,\n  accent,\n    textDark,\n    textLight,\n  githubLink,\n  liveLink,\n   techStack[]->{title},\n  \"desktopImg\": images.desktop.asset->,\n  \"mobileImg\": images.mobile.asset->,\n  \"tabletImg\": images.tablet.asset->,\n   'desktopAlt':images.desktop.alt,\n   'mobileAlt':images.mobile.alt,\n   'tabletAlt':images.tablet.alt\n}": AllProjectsQueryResult;
   }
 }

@@ -24,7 +24,7 @@ const HorizontalScroll = ({ projects }: { projects: FeaturedProjectsQueryResult 
     setContainerTl(tween);
   });
   return (
-    <div ref={root} className="flex overscroll-none w-full h-screen flex-nowrap ">
+    <div ref={root} className="flex overscroll-none w-full h-screen flex-nowrap overflow-x-hidden">
       {projects.map((project, index) => (
         <div key={index}>
           <FeaturedProject project={project} htl={containerTl} />
