@@ -472,6 +472,16 @@
         },
         "optional": true
       },
+      "tags": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "array",
+          "of": {
+            "type": "string"
+          }
+        },
+        "optional": true
+      },
       "readingTime": {
         "type": "objectAttribute",
         "value": {

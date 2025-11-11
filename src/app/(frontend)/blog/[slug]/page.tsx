@@ -5,6 +5,8 @@ import { format } from "date-fns";
 import { Calendar, Clock } from "lucide-react";
 import { PortableText } from "next-sanity";
 import Image from "next/image";
+import { components } from "../../../../../components/ui/PortableTextComponent";
+import PortableBody, { BlockNode } from "../../../../../components/ui/PortableBody";
 
 const BlogPost = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = await params;
@@ -56,7 +58,7 @@ const BlogPost = async ({ params }: { params: Promise<{ slug: string }> }) => {
         <div className="my-6">
           {post.body ? (
             <div className="lg:col-span-7 lg:col-start-6 prose dark:prose-invert lg:prose-lg prose-code:bg-fg prose-code:text-bg prose-code:px-1 prose-code:py-0.5 prose-code:rounded-md prose-code:text-sm prose-code:font-mono">
-              <PortableText value={post.body} />
+              <PortableBody value={post.body as BlockNode[]} />
             </div>
           ) : null}
         </div>
