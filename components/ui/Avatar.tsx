@@ -20,7 +20,7 @@ const Avatar = ({ avatar }: { avatar: any }) => {
     if (!imageEl || !root.current || !headline) return;
     const imgRect = imageEl.getBoundingClientRect();
     const anchorRect = headline.getBoundingClientRect();
-    const offset = 0;
+    const offset = 50;
     const delta = anchorRect.top - imgRect.top + offset;
     gsap.set(imageEl, {
       y: delta,
@@ -32,10 +32,9 @@ const Avatar = ({ avatar }: { avatar: any }) => {
       defaults: { ease: "power2.out" },
       scrollTrigger: {
         trigger: root.current,
-        start: `+=${delta} top`,
+        start: `+=${delta} 18%`,
         end: "bottom center",
         scrub: true,
-        // once: true,
       },
     });
 

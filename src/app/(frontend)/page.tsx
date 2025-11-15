@@ -24,7 +24,7 @@ const HomePage = async () => {
       <SplitText
         type="chars"
         text={author.shortIntro}
-        className="text-center text-[min(10vw,80px)] max-w-[min(90vw,1024px)] mx-auto  leading-snug! cursor-default font-bold
+        className="text-center text-[min(10vw,80px)] max-w-[min(90vw,1024px)] mx-auto  cursor-default font-bold
         headline"
       />
       <SplitText

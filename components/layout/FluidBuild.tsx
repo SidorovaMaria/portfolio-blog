@@ -1,6 +1,31 @@
 "use client";
+/**
+ * A scroll-driven animation component that displays a sticky "I build" title
+ * alongside a list of items that animate into focus as the user scrolls.
+ *
+ * Uses GSAP and ScrollTrigger to create a cinematic effect where:
+ * - The title remains pinned in place
+ * - List items sequentially come into focus (opacity + blur transitions)
+ * - Scroll position controls the animation timeline
+ * - Snaps to each item for precise control
+ *
+ * @component
+ * @param {FluidBuildProps} props - Component props
+ * @param {string[]} props.build - Array of text items to animate through (e.g., ["websites", "applications", "experiences"])
+ *
+ * @example
+ * ```tsx
+ * <FluidBuild build={["websites", "mobile apps", "design systems"]} />
+ * ```
+ *
+ * @remarks
+ * - Automatically scales animation based on the number of items
+ * - Re-runs animation setup when `build.length` changes
+ * - Uses CSS custom properties (`--count`, `--i`) for dynamic styling
+ * - Implements scroll-snap behavior for enhanced UX
+ */
 
-import { CSSProperties, useEffect, useMemo, useRef } from "react";
+import { CSSProperties, useMemo, useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -12,65 +37,67 @@ type FluidBuildProps = {
 };
 
 const FluidBuild = ({ build }: FluidBuildProps) => {
+  // Whole section wrapper – used as GSAP scope/root
   const sectionRef = useRef<HTMLElement | null>(null);
+  // Sticky title – used as ScrollTrigger "pin" + trigger
   const fluidTitleRef = useRef<HTMLHeadingElement | null>(null);
-  useEffect(() => {
-    if (fluidTitleRef.current) {
-      console.log("FluidBuild mounted, title:", fluidTitleRef.current.getBoundingClientRect());
-    }
-  }, []);
 
   useGSAP(
     (context) => {
       const section = sectionRef.current;
-      if (!section) return;
+      const title = fluidTitleRef.current;
+
+      if (!section || !title) return;
 
       // Scope queries to this component only
       const items = gsap.utils.toArray<HTMLLIElement>(section.querySelectorAll(".fluid-color"));
-      const title = fluidTitleRef.current;
 
-      if (!items.length || !title) return;
+      if (!items.length) return;
 
-      context.add(() => {
-        // Initial state
-        gsap.set(items, { transformOrigin: "0 50%" });
-        gsap.set(items.slice(1), {
-          opacity: 0.25,
-          filter: "blur(2px)",
-        });
+      // --- Initial state for the color lines ---
+      // All items share the same transform origin
+      gsap.set(items, { transformOrigin: "0 50%" });
 
-        const tl = gsap
-          .timeline()
-          .to(items.slice(1), {
-            opacity: 1,
+      // All except the first start "muted"
+      gsap.set(items.slice(1), {
+        opacity: 0.25,
+        filter: "blur(2px)",
+      });
+      // Timeline that cycles focus across the list items
+      const tl = gsap
+        .timeline()
+        // Phase 1: bring all non-first items into focus
+        .to(items.slice(1), {
+          opacity: 1,
+          stagger: 0.5,
+          filter: "blur(0px)",
+        })
+        // Phase 2: dim everything except the last item,
+        // starting at the same time (position 0)
+        .to(
+          items.slice(0, -1),
+          {
+            opacity: 0.25,
             stagger: 0.5,
-            filter: "blur(0px)",
-          })
-          .to(
-            items.slice(0, -1),
-            {
-              opacity: 0.25,
-              stagger: 0.5,
-              filter: "blur(2px)",
-            },
-            0
-          );
-
-        ScrollTrigger.create({
-          trigger: title,
-          start: "top center",
-          endTrigger: items[items.length - 1],
-          end: "top center",
-          pin: true,
-          animation: tl,
-          scrub: 0.5,
-          snap: build.length > 1 ? 1 / (build.length - 1) : 1,
-        });
+            filter: "blur(2px)",
+          },
+          0
+        );
+      // Scroll-driven control of the timeline
+      ScrollTrigger.create({
+        trigger: title, // the sticky title as anchor
+        start: "top center",
+        endTrigger: items[items.length - 1], // last item defines end
+        end: "top center",
+        pin: true, // keep title fixed during the sequence
+        animation: tl, // link scroll to this timeline
+        scrub: 0.5, // smooth scrubbing, takes 0.5 seconds to "catch up"
+        snap: build.length > 1 ? 1 / (build.length - 1) : 1, // snap to each item
       });
     },
-    { scope: sectionRef }
+    { scope: sectionRef, dependencies: [build.length] } // Re-run if the number of items changes -> for scalability
   );
-
+  // CSS custom prop for the list (`--count`)
   const listStyle = useMemo(
     () =>
       ({
