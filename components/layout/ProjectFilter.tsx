@@ -1,18 +1,25 @@
 "use client";
-import { GetAllTechTagsQueryResult } from "@/sanity/types";
 import React, { useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
+import { GetAllTechTagsQueryResult } from "@/sanity/types";
 import TechTag from "../ui/TechTag";
 import { StackCompactIcon, StackIcon } from "@sanity/icons";
-
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { formUrlQuery, removeKeysFromUrlQuery } from "../../lib/url";
 import SplitText from "../ui/SplitText";
-
-const ProjectFilter = ({ techStack }: { techStack: GetAllTechTagsQueryResult }) => {
+type ProjectFilterProps = {
+  techStack: GetAllTechTagsQueryResult;
+};
+/* --------------------------------- FILTER BAR ------------------------------- */
+const ProjectFilter = ({ techStack }: ProjectFilterProps) => {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [compact, setCompact] = useState<boolean>(searchParams.get("view") === "compact");
+  // View mode comes from the URL: ?view=compact or no param (full view)
+  const compact = searchParams.get("view") === "compact";
+
+  // const [compact, setCompact] = useState<boolean>(searchParams.get("view") === "compact");
+
+  // Read current selected tags from the query param ?tag=React,Next.js,...
   const readTags = React.useCallback((): string[] => {
     const raw = searchParams.get("tag") || "";
     return raw
@@ -20,6 +27,8 @@ const ProjectFilter = ({ techStack }: { techStack: GetAllTechTagsQueryResult }) 
       .map((t) => t.trim())
       .filter(Boolean);
   }, [searchParams]);
+
+  // Check if a given tag is currently active
   const tagChosen = React.useCallback(
     (tag: string) => {
       const tags = readTags();
@@ -27,61 +36,58 @@ const ProjectFilter = ({ techStack }: { techStack: GetAllTechTagsQueryResult }) 
     },
     [readTags]
   );
+  // Toggle a tag on/off in the URL query
   const toggleTag = React.useCallback(
     (tag: string) => {
       const params = new URLSearchParams(searchParams.toString());
       const current = readTags();
-      const t = tag;
-
       let next: string[];
-      if (current.includes(t)) {
-        next = current.filter((x) => x !== t);
+
+      if (current.includes(tag)) {
+        next = current.filter((x) => x !== tag);
       } else {
-        next = Array.from(new Set([...current, t]));
+        next = Array.from(new Set([...current, tag]));
       }
 
       if (next.length === 0) params.delete("tag");
       else params.set("tag", next.join(","));
-      params.delete("page"); // Reset to first page on tag change
       router.replace(`${pathname}?${params.toString()}`);
     },
     [pathname, router, searchParams, readTags]
   );
-  /** Preserve query params while navigating to a new path. */
-  const withParams = React.useCallback(
-    (newPathname: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      const qs = params.toString();
-      return qs ? `${newPathname}?${qs}` : newPathname;
-    },
-    [searchParams]
-  );
+
   const setView = (isFull: boolean) => {
     const params = new URLSearchParams(searchParams.toString());
+
     if (isFull) {
+      // Full view → remove `view` param (default)
       params.delete("view");
     } else {
+      // Compact view → set `view=compact`
       params.set("view", "compact");
     }
-    setCompact(!isFull);
+
     router.replace(`${pathname}?${params.toString()}`);
   };
   return (
-    <div className="w-full flex gap-6 lg:gap-20 items-center md:items-start ">
-      <div className="flex flex-wrap gap-1 items-center justify-start gap-y-2 w-full">
+    <div className="flex w-full items-center gap-6 md:items-start lg:gap-20">
+      {/* Tag filter list */}
+      <div className="flex w-full flex-wrap items-center justify-start gap-1 gap-y-2">
         {techStack.map((tech) => (
           <TechTag
-            button
             key={tech.title}
             title={tech.title}
+            button
             onClick={() => toggleTag(tech.title)}
             active={tagChosen(tech.title)}
           />
         ))}
       </div>
-      <div className="flex items-center  justify-center md:justify-end gap-2">
+      {/* View mode toggle (full vs compact) */}
+      <div className="flex items-center justify-center gap-2 md:justify-end">
+        {/* Full view button */}
         <button
-          className={`size-10 aspect square border rounded-md flex items-center justify-center  ${
+          className={`flex size-10 items-center justify-center rounded-md border aspect-square ${
             !compact ? "bg-muted text-bg" : ""
           }`}
           disabled={!compact}
@@ -90,8 +96,9 @@ const ProjectFilter = ({ techStack }: { techStack: GetAllTechTagsQueryResult }) 
         >
           <StackIcon className="size-8" />
         </button>
+        {/* Compact view button */}
         <button
-          className={`size-10 aspect square border rounded-md flex items-center justify-center  ${
+          className={`flex size-10 items-center justify-center rounded-md border aspect-square ${
             compact ? "bg-muted text-bg" : ""
           }`}
           title="Compact View"
@@ -106,11 +113,13 @@ const ProjectFilter = ({ techStack }: { techStack: GetAllTechTagsQueryResult }) 
 };
 
 export default ProjectFilter;
+
 export const NoProjectFound = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const tags = searchParams.get("tag");
+
+  // Remove the `tag` filter from the URL and keep everything else
   const handleReset = React.useCallback(() => {
     const params = new URLSearchParams(searchParams.toString());
     params.delete("tag");
@@ -121,16 +130,21 @@ export const NoProjectFound = () => {
     <aside className="flex flex-col items-center justify-center gap-4">
       <SplitText
         type="chars"
-        text={"No projects found"}
-        className="text-[min(6vw,40px)] text-center leading-snug max-sm:leading-tight cursor-default font-bold mx-auto"
+        text="No projects found"
+        className="mx-auto cursor-default text-center text-[min(6vw,40px)] font-bold leading-snug max-sm:leading-tight"
       />
       <SplitText
         type="words"
         text={"Try adjusting your filters or selecting different technologies"}
-        className="text-center text-[min(5vw,32px])] max-w-[min(60vw,768px)] mx-auto  text-muted-foreground tracking-wide cursor-default"
+        className="text-center text-[min(3vw,18px)] max-w-[min(60vw,768px)] mx-auto text-muted-foreground tracking-wide cursor-default"
       />
 
-      <TechTag button onClick={handleReset} title="Reset Tag Filter" className="text-lg!"></TechTag>
+      <TechTag
+        button
+        onClick={handleReset}
+        title="Reset Tag Filter"
+        className=" text-[min(3vw,18px)]!"
+      ></TechTag>
     </aside>
   );
 };

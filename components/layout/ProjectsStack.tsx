@@ -1,34 +1,43 @@
 "use client";
-import { AllProjectsQueryResult, FeaturedProjectsQueryResult } from "@/sanity/types";
+import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
+
+import { FeaturedProjectsQueryResult } from "@/sanity/types";
+import ProjectStacked from "../ui/ProjectStacked";
+
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import ProjectStacked from "../ui/ProjectStacked";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
-const ProjectsStack = ({ projects }: { projects: FeaturedProjectsQueryResult }) => {
+type ProjectsStackProps = {
+  projects: FeaturedProjectsQueryResult;
+};
+
+const ProjectsStack = ({ projects }: ProjectsStackProps) => {
   const searchParams = useSearchParams();
-  const [compact, setCompact] = useState<boolean>(searchParams.get("view") === "compact");
-  useEffect(() => {
-    setCompact(searchParams.get("view") == "compact");
-  }, [searchParams]);
-  const root = useRef<HTMLDivElement>(null);
+
+  const rootRef = useRef<HTMLElement | null>(null);
+  // View mode comes from the URL (?view=compact)
+  const compact = searchParams.get("view") === "compact";
 
   useGSAP(
     () => {
-      const slideWrappers = gsap.utils.toArray(".project-card-wrapper") as HTMLElement[];
-      const slides = gsap.utils.toArray(".card-slide") as HTMLElement[];
-      if (slideWrappers.length !== slides.length || slideWrappers.length === 0) {
-        return;
-      }
+      const root = rootRef.current;
+      if (!root) return;
+      const slideWrappers = gsap.utils.toArray<HTMLElement>(
+        root.querySelectorAll(".project-card-wrapper")
+      );
+      const slides = gsap.utils.toArray<HTMLElement>(root.querySelectorAll(".card-slide"));
+      // Bail if something is off
+      if (!slideWrappers.length || slideWrappers.length !== slides.length) return;
       ScrollTrigger.refresh(); // re-measure after CSS grid applies
 
       slideWrappers.forEach((wrapper, i) => {
         const card = slides[i];
+
         gsap.to(card, {
-          y: 200, // cards move down a bit
+          y: 200, // cards move down a bit as you scroll
           zIndex: -30,
           transformOrigin: "50% center",
           ease: "power1.in",
@@ -49,14 +58,17 @@ const ProjectsStack = ({ projects }: { projects: FeaturedProjectsQueryResult }) 
       });
     },
     {
-      scope: root,
+      scope: rootRef,
       dependencies: [compact, projects.length],
     }
   );
+  const baseClasses = "stack-container w-full gap-6";
   return (
     <section
-      className={`stack-container flex flex-col ${compact && "grid grid-cols-1 md:grid-cols-2"}`}
-      ref={root}
+      ref={rootRef}
+      className={
+        compact ? `${baseClasses} grid grid-cols-1 md:grid-cols-2` : `${baseClasses} flex flex-col`
+      }
     >
       {projects.map((project) => (
         <ProjectStacked key={project.index} project={project} compact={compact} />

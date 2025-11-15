@@ -16,15 +16,18 @@ const HorizontalScroll = ({ projects }: { projects: FeaturedProjectsQueryResult 
       ease: "none",
       scrollTrigger: {
         trigger: root.current,
+        scrub: 0.01,
         pin: true,
-        scrub: 1,
         end: "+=3500",
       },
     });
     setContainerTl(tween);
   });
   return (
-    <div ref={root} className="flex overscroll-none w-full h-screen flex-nowrap overflow-x-hidden">
+    <div
+      ref={root}
+      className="flex lg:overscroll-none lg:w-full lg:h-screen flex-nowrap overflow-x-hidden"
+    >
       {projects.map((project, index) => (
         <div key={index}>
           <FeaturedProject project={project} htl={containerTl} />
