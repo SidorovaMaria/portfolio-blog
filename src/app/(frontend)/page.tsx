@@ -24,15 +24,17 @@ const HomePage = async () => {
       <SplitText
         type="chars"
         text={author.shortIntro}
-        className="text-center text-[min(10vw,80px)] max-w-[min(90vw,1024px)] mx-auto leading-snug max-sm:leading-tight cursor-default font-bold
+        className="text-center text-[min(10vw,80px)] max-w-[min(90vw,1024px)] mx-auto  leading-snug! cursor-default font-bold
         headline"
       />
       <SplitText
         type="words"
-        delay={0.6}
-        stagger={0.055}
+        delay={0.8}
         text={author.intro}
-        className="text-center text-[min(4vw,16px)] max-w-[min(60vw,768px)] mx-auto  text-muted-foreground tracking-wide cursor-default
+        optionsIn={{ y: 40, opacity: 0 }}
+        optionsOut={{ y: 0, opacity: 1, ease: "expo.out", duration: 1.2 }}
+        stagger={0.025}
+        className="text-center text-[min(4vw,16px)] max-w-[min(60vw,768px)] mx-auto text-muted-foreground tracking-wide cursor-default
    "
       />
       <Marquee techStack={author.techStack} />

@@ -16,7 +16,7 @@ const ContactPage = async () => {
           type="chars"
           text={"Contact Me"}
           className="text-left md:text-center text-[min(8vw,54px)] mx-auto leading-snug max-sm:leading-tight cursor-default font-bold
-          headline"
+         "
         />
         <SplitText
           type="words"

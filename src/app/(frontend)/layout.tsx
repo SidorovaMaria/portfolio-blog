@@ -8,7 +8,9 @@ import { SplitText } from "gsap/SplitText";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Footer from "../../../components/layout/Footer";
 import { getAuthorSocialLinksQuery } from "@/sanity/lib/queries";
+
 gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
+
 export const metadata: Metadata = {
   title: "Maria Sidorova | Frontend & Full-Stack Developer",
   description:

@@ -2,9 +2,11 @@
 import { urlFor } from "@/sanity/lib/image";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { SplitText } from "gsap/SplitText";
+
+import ScrollTrigger from "gsap/ScrollTrigger";
 import Image from "next/image";
 import React, { useRef } from "react";
+gsap.registerPlugin(ScrollTrigger);
 
 const Avatar = ({ avatar }: { avatar: any }) => {
   if (!avatar) return null;
@@ -20,7 +22,6 @@ const Avatar = ({ avatar }: { avatar: any }) => {
     const anchorRect = headline.getBoundingClientRect();
     const offset = 0;
     const delta = anchorRect.top - imgRect.top + offset;
-    console.log("Delta for Avatar animation:", delta);
     gsap.set(imageEl, {
       y: delta,
       zIndex: -30,

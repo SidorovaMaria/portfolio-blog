@@ -38,6 +38,9 @@ body {
 @utility scroll-snap-align {
   scroll-snap-align: center;
 }
+@utility scroll-snap-start {
+  scroll-snap-align: start;
+}
 @utility coffee-gradient {
   @apply text-transparent bg-clip-text bg-linear-to-r from-primary  to-fg;
 }
@@ -105,5 +108,9 @@ body {
   .error-message::before {
     content: "⚠";
     @apply mr-1;
+  }
+  .split-char,
+  .split-mask-char-mask {
+    line-height: 1.375;
   }
 }

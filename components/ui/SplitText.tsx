@@ -12,8 +12,13 @@ const SplitText = ({
   component,
   stagger = 0.025,
   delay = 0,
-  options = {
-    yPercent: 100,
+  optionsIn = {
+    y: 100,
+    opacity: "0%",
+  },
+  optionsOut = {
+    y: 0,
+    opacity: "100%",
   },
 }: {
   text: string;
@@ -22,7 +27,8 @@ const SplitText = ({
   component?: React.ElementType;
   stagger?: number;
   delay?: number;
-  options?: gsap.TweenVars;
+  optionsIn?: gsap.TweenVars;
+  optionsOut?: gsap.TweenVars;
 }) => {
   const Component = component || "div";
   const textRef = React.useRef<HTMLDivElement | null>(null);
@@ -30,26 +36,36 @@ const SplitText = ({
     new splitTextGSAP(textRef.current, {
       type,
       smartWrap: true,
-      mask: type,
+      // mask: type,
+      charsClass: "split-char",
       onSplit: (instance) => {
-        return gsap.from(instance[type], {
-          ...options,
-          stagger: stagger,
-          delay: delay,
-          scrollTrigger: {
-            trigger: textRef.current,
-            start: "top 80%",
-            end: "bottom 20%",
+        return gsap.fromTo(
+          instance[type],
+          {
+            ...optionsIn,
           },
-          onComplete: () => instance.revert(),
-        });
+          {
+            ...optionsOut,
+            ease: "power2.out",
+            stagger: stagger,
+            delay: delay,
+            scrollTrigger: {
+              trigger: textRef.current,
+              start: "top 80%",
+              end: "bottom 20%",
+            },
+            onComplete: () => instance.revert(),
+          }
+        );
       },
     });
   });
   return (
-    <Component className={className} ref={textRef}>
-      {text}
-    </Component>
+    <div className="overflow-hidden">
+      <Component className={`${className} split-text`} ref={textRef}>
+        {text}
+      </Component>
+    </div>
   );
 };
 
