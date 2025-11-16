@@ -1,75 +1,122 @@
+/**
+ * A horizontal scrolling marquee component that displays a list of technology items with icons.
+ *
+ * @remarks
+ * This component uses GSAP animations to create a continuous horizontal loop effect.
+ * The scroll speed dynamically adjusts based on user scroll velocity, with smooth transitions
+ * between different speeds. Items fade in with a staggered animation on mount.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * const techStack = [
+ *   { title: "React", icon: sanityImageObject },
+ *   { title: "TypeScript", icon: sanityImageObject }
+ * ];
+ *
+ * <Marquee techStack={techStack} />
+ * ```
+ *
+ * @param props - The component props
+ * @param props.techStack - Array of technology items to display in the marquee
+ * @param props.techStack[].title - The name/title of the technology
+ * @param props.techStack[].icon - Sanity image object for the technology icon
+ *
+ * @returns A rotating marquee displaying technology stack items with icons
+ */
 "use client";
+
+import { useRef } from "react";
+import Image from "next/image";
+import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import React, { useRef } from "react";
 import { horizontalLoop } from "../../lib/gsap/horizontalLoop";
-import gsap from "gsap";
-import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
 
-const Marquee = ({
-  techStack,
-}: {
-  techStack: Array<{
-    title: string;
-    icon: any;
-  }>;
-}) => {
+gsap.registerPlugin(ScrollTrigger);
+type TechItem = {
+  title: string;
+  icon: any; // you can tighten this to your Sanity image type later
+};
+type MarqueeProps = {
+  techStack: TechItem[];
+};
+const Marquee = ({ techStack }: MarqueeProps) => {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const itemRefs = useRef<HTMLDivElement[]>([]);
   const refs = useRef<HTMLDivElement[]>([]);
-  const tlRef = useRef<gsap.core.Timeline | null>(null);
 
-  useGSAP(() => {
-    gsap.fromTo(refs.current, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 1, delay: 2 });
-    const tl = horizontalLoop(refs.current, {
-      repeat: -1,
-      paused: false,
-      reversed: false,
-      paddingRight: 24,
-      snap: techStack.length,
-    });
-    tlRef.current = tl;
-    const BASE = 0.5; // idle drift when no scrolling
-    const MAX = 1.5; // cap how wild it can get
-    tl.timeScale(BASE);
-    const scrollTrigger = ScrollTrigger.create({
-      onUpdate: (self) => {
-        const velocity = self.getVelocity();
-        // Compute a magnitude for the animation timeScale from scroll velocity:
-        // - Map the absolute ScrollTrigger velocity (0..3000) into the desired timescale range (BASE..MAX).
-        // - Clamp the result to [0, MAX] to prevent negative or excessively large values.
-        // `mag` will be used (with direction) to set the timeline's timeScale.
-        const mag = gsap.utils.clamp(
-          0,
-          MAX,
-          gsap.utils.mapRange(0, 3000, BASE, MAX, Math.abs(velocity))
-        );
-        const dir = velocity === 0 ? 0 : velocity > 0 ? 1 : -1;
-        const target = dir === 0 ? BASE : mag * dir;
-        // Smoothly ease to the new timeScale to avoid jitter.
-        gsap.to(tl, { timeScale: target, duration: 0.2, overwrite: true });
-      },
-    });
-  });
+  useGSAP(
+    () => {
+      const items = itemRefs.current.filter(Boolean);
+      if (!items.length) return;
+      // Soft fade/slide-in on mount
+      gsap.fromTo(
+        items,
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1, delay: 2, stagger: 0.05 }
+      );
+
+      const tl = horizontalLoop(items, {
+        repeat: -1,
+        paused: false,
+        reversed: false,
+        paddingRight: 24,
+        snap: techStack.length,
+      });
+
+      const BASE = 0.5; // idle drift when no scrolling
+      const MAX = 1.5; // cap how wild it can get
+      tl.timeScale(BASE);
+
+      ScrollTrigger.create({
+        onUpdate: (self) => {
+          const velocity = self.getVelocity();
+          const mag = gsap.utils.clamp(
+            0,
+            MAX,
+            gsap.utils.mapRange(0, 3000, BASE, MAX, Math.abs(velocity))
+          );
+          const dir = velocity === 0 ? 0 : velocity > 0 ? 1 : -1;
+          const target = dir === 0 ? BASE : mag * dir;
+          // Smoothly ease to the new timeScale to avoid jitter.
+          gsap.to(tl, {
+            timeScale: target,
+            duration: 0.2,
+            overwrite: true,
+          });
+        },
+      });
+    },
+    {
+      scope: containerRef,
+      dependencies: [techStack.length],
+    }
+  );
   return (
-    <div className="flex items-center w-full border-primary px-6 py-6 my-18 overflow-hidden gap-6 -rotate-2 ">
+    <div
+      ref={containerRef}
+      className="my-18 flex w-full -rotate-2 items-center gap-6 overflow-hidden px-6 py-6 border-primary"
+    >
       {techStack.map((tech, i) => (
         <div
-          key={i}
+          key={tech.title ?? i}
           ref={(el) => {
-            refs.current[i] = el!;
+            if (el) itemRefs.current[i] = el;
           }}
-          className="flex gap-2 items-center justify-center pr-6"
+          className="flex items-center justify-center gap-2 pr-6"
         >
-          {tech?.icon ? (
+          {tech.icon ? (
             <Image
-              src={urlFor(tech?.icon).width(20).height(20).quality(100).auto("format").url()}
+              src={urlFor(tech.icon).width(20).height(20).quality(100).auto("format").url()}
               alt={tech.title}
-              width="20"
-              height="20"
+              width={20}
+              height={20}
               className="inline-flex whitespace-nowrap"
             />
           ) : null}
-          <p className="whitespace-nowrap text-base font-clash text-muted  tracking-wider uppercase">
+          <p className="font-clash whitespace-nowrap text-base uppercase tracking-wider text-muted">
             {tech.title}
           </p>
         </div>

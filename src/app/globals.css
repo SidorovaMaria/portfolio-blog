@@ -113,4 +113,7 @@ body {
   .split-mask-char-mask {
     line-height: 1.375;
   }
+  .btn-light-up {
+    @apply flex w-full items-center justify-center gap-2 rounded-xl bg-(--accent-color) px-2 py-2 text-(--text-dark) shadow-fg/40 transition duration-300 origin-top hover:brightness-125 hover:shadow-md hover:rotate-x-30 border-b-4 border-transparent hover:border-(--text-dark)/80;
+  }
 }

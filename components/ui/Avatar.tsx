@@ -45,7 +45,7 @@ import { useRef } from "react";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const Avatar = ({ avatar }: { avatar: Author["avatar"] }) => {
+const Avatar = ({ avatar }: { avatar: Author["avatar"] | null }) => {
   if (!avatar) return null;
 
   const rootRef = useRef<HTMLDivElement>(null);

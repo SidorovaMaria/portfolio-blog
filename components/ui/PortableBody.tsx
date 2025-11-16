@@ -1,4 +1,26 @@
+/**
+ * A custom PortableText renderer that groups consecutive images into responsive grids
+ * and renders other content blocks normally.
+ *
+ * @component
+ * @param {Object} props - Component props
+ * @param {BlockNode[]} props.value - Array of Sanity block nodes containing text, images, and other content types
+ *
+ * @returns {JSX.Element} Rendered portable text content with images displayed in responsive grids
+ *
+ * @example
+ * ```tsx
+ * <PortableBody value={post.body} />
+ * ```
+ *
+ * @remarks
+ * - Consecutive images are automatically grouped into responsive grids (1-3 columns based on screen size)
+ * - Single images are rendered full-width with rounded corners
+ * - Non-image content is rendered using the standard PortableText component
+ * - Images are optimized using Next.js Image component with automatic format selection
+ */
 // components/PortableBody.tsx
+
 import Image from "next/image";
 import { PortableText, PortableTextComponents } from "next-sanity";
 import { urlFor } from "@/sanity/lib/image";
