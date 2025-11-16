@@ -2,38 +2,37 @@ import SplitText from "../../../../components/ui/SplitText";
 import { sanityFetch } from "@/sanity/lib/live";
 import { getAuthorSocialLinksQuery } from "@/sanity/lib/queries";
 import ContactLinks from "../../../../components/layout/ContactLinks";
-import ContactForm from "../../../../components/forms/ContactForm";
 import WhyMe from "../../../../components/layout/WhyMe";
 import DownloadCVBtn from "../../../../components/ui/DownloadCvBtn";
+import ContactForm from "../../../../components/forms/ContactForm";
 
 const ContactPage = async () => {
   const { data: socials } = await sanityFetch({ query: getAuthorSocialLinksQuery });
   return (
-    <main className="my-12 mx-[4vw]">
+    <main className="mx-[4vw] my-12">
       <DownloadCVBtn />
-      <div className="space-y-2">
+
+      <section className="space-y-2">
         <SplitText
           type="chars"
-          text={"Contact Me"}
-          className="text-left md:text-center text-[min(8vw,54px)] mx-auto leading-snug max-sm:leading-tight cursor-default font-bold
-         "
+          text="Contact Me"
+          className="mx-auto cursor-default text-left text-[min(8vw,54px)] font-bold leading-snug max-sm:leading-tight md:text-center"
         />
         <SplitText
           type="words"
           delay={0.6}
           stagger={0.055}
-          text={
-            "I'm currently open to new opportunities and collaborations. Please feel free to reach out if you have any questions or just want to say hello!"
-          }
-          className="text-left md:text-center text-[min(5vw,16px)] md:max-w-[min(60vw,768px)] mx-auto  text-muted-foreground tracking-wide cursor-default
-           "
+          text="I'm currently open to new opportunities and collaborations. Please feel free to reach out if you have any questions or just want to say hello!"
+          className="mx-auto cursor-default text-left text-[min(5vw,16px)] tracking-wide text-muted-foreground md:max-w-[min(60vw,768px)] md:text-center"
         />
-      </div>
-      <ContactLinks socials={socials} />
-      <div className="grid md:grid-cols-2 gap-12 items-start my-12">
+      </section>
+
+      {socials && <ContactLinks socials={socials} />}
+
+      <section className="my-12 grid items-start gap-12 md:grid-cols-2">
         <WhyMe />
         <ContactForm />
-      </div>
+      </section>
     </main>
   );
 };
