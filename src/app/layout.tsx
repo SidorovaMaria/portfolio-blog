@@ -30,7 +30,7 @@ export default async function RootLayout({
       <body className={`${inter.variable} ${clashDisplay.variable} antialiased`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >
